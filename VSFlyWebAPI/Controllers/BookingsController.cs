@@ -24,7 +24,16 @@ namespace VSFlyWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookingSet()
         {
-            return await _context.BookingSet.ToListAsync();
+            var bookingList = await _context.BookingSet.ToListAsync();
+            List<Booking> bookingListTmp = new List<Booking>();
+            foreach (Booking b in bookingList)
+            {
+                Booking bM = new Booking();
+                bM.FlightNo = b.FlightNo;
+                bM.PassengerID = b.PassengerID;
+                bookingListTmp.Add(bM);
+            }
+            return bookingListTmp;
         }
 
         // GET: api/Bookings/5
@@ -117,5 +126,8 @@ namespace VSFlyWebAPI.Controllers
         {
             return _context.BookingSet.Any(e => e.FlightNo == id);
         }
+
+        // ----------------------------
+
     }
 }

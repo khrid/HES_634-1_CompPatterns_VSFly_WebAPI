@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VSFlyEFCoreApp;
+using VSFlyWebAPI.Models;
 
 namespace VSFlyWebAPI.Controllers
 {
@@ -22,33 +23,52 @@ namespace VSFlyWebAPI.Controllers
 
         // GET: api/Flights
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Models.FlightM>>> GetFlightSet()
+        public async Task<ActionResult<IEnumerable<FlightM>>> GetFlightSet()
         {
-            var flightList =  await _context.FlightSet.ToListAsync();
-            List<Models.FlightM> listFlightM = new List<Models.FlightM>();
-            foreach( Flight f in flightList)
+            var flightList = await _context.FlightSet.ToListAsync();
+            List<FlightM> listFlightM = new List<FlightM>();
+            foreach (Flight f in flightList)
             {
-                Models.FlightM fM = new Models.FlightM();
-                fM.Date = f.Date;
-                fM.Departure = f.Departure;
-                fM.Destination = f.Destination;
-                listFlightM.Add(fM);
+                    FlightM fM = new FlightM();
+                    fM.FlightNo = f.FlightNo;
+                    fM.Date = f.Date;
+                    fM.Departure = f.Departure;
+                    fM.Destination = f.Destination;
+                    listFlightM.Add(fM);
             }
             return listFlightM;
         }
 
         // GET: api/Flights/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Flight>> GetFlight(int id)
+        public async Task<ActionResult<FlightM>> GetFlight(int id)
         {
             var flight = await _context.FlightSet.FindAsync(id);
+            var flightM = new FlightM();
 
             if (flight == null)
             {
                 return NotFound();
+            } else
+            {
+                flightM.FlightNo = flight.FlightNo;
+                flightM.Date = flight.Date;
+                flightM.Departure = flight.Departure;
+                flightM.Destination = flight.Destination;
+                // compute capacity
+                // first we need the number of reservation for this flight
+                // TODO find how to get all bookings from BookingsController, not from _context
+                //BookingsController bookingsController = new BookingsController(_context);
+                //var bookings = bookingsController.GetBookingSet();
+                //bookings = _context.BookingSet;
+                //flightM.Seats = (short?)(flight.Seats - n);
+
+                // price calculation algorithm
+                flightM.FinalPrice = ComputeSalePrice(GetFlightBookedSeats(flight), flight.Seats, flightM.Date, flight.BasePrice);
             }
 
-            return flight;
+
+            return flightM;
         }
 
         // PUT: api/Flights/5
@@ -125,6 +145,87 @@ namespace VSFlyWebAPI.Controllers
         private bool FlightExists(int id)
         {
             return _context.FlightSet.Any(e => e.FlightNo == id);
+        }
+
+        // -----------------------------------------
+
+        // GET: api/FutureFlights
+        [HttpGet]
+        [Route("FutureFlights")]
+        public async Task<ActionResult<IEnumerable<FlightM>>> GetFutureFlightsSet()
+        {
+            var flightList = await _context.FlightSet.ToListAsync();
+            List<FlightM> listFlightM = new List<FlightM>();
+            foreach (Flight f in flightList)
+            {
+                // do not return past flights
+                if (f.Date >= DateTime.Now)
+                {
+                    FlightM fM = new FlightM();
+                    fM.FlightNo = f.FlightNo;
+                    fM.Date = f.Date;
+                    fM.Departure = f.Departure;
+                    fM.Destination = f.Destination;
+                    listFlightM.Add(fM);
+                }
+            }
+            return listFlightM;
+        }
+
+        private int GetFlightBookedSeats(Flight flight)
+        {
+            int BookedSeats = 0;
+            foreach (var b in _context.BookingSet)
+            {
+                if (b.FlightNo == flight.FlightNo) BookedSeats++;
+            }
+            return BookedSeats;
+        }
+
+        private Boolean IsFlightFull(Flight flight)
+        {
+            return (flight.Seats == GetFlightBookedSeats(flight));
+        }
+
+
+        private double ComputeSalePrice(int BookedSeats, short? FlightCapacity, DateTime FlightDeparture, double BasePrice) 
+        {
+            double capacity = (double)(BookedSeats / FlightCapacity * 100);
+            //double SalePrice = BasePrice;
+            double Modifier = 1;
+            /*   1.	If the airplane is more than 80% full regardless of the date:
+                    a. sale price = 150% of the base price
+                 2.	If the plane is filled less than 20% less than 2 months before departure:
+                    a. sale price = 80% of the base price
+                 3.	If the plane is filled less than 50% less than 1 month before departure:
+                    a. sale price = 70% of the base price
+                 4.	4. In all other cases:
+                    a. sale price = base price
+            */
+            if(capacity > 80) 
+            {
+                Modifier =  1.5;
+            } 
+            else
+            {
+                int delta = (DateTime.Now - FlightDeparture).Days;
+                if (delta < 60)
+                {
+                    if (delta < 30)
+                    {
+                        if(capacity < 50)
+                        {
+                            Modifier = 0.7;
+                        } 
+                        else if (capacity < 20)
+                        {
+                            Modifier = 0.8;
+                        }
+                    }
+                }
+            }
+
+            return Math.Round(BasePrice * Modifier, 2);
         }
     }
 }
