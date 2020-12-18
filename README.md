@@ -25,7 +25,7 @@ The result consists of 2 Visual Studio solutions.
     -	List of flights
     -	Buy tickets on available flights (no change or cancellation possible)
 
-### VSAFly's WebAPI (*this repository*)
+### VSFly's WebAPI (*this repository*)
 -	With a webAPI layer
   -	A controller accepting RESTfull requests and returning the data in JSON format
   - Requests to be processed:
