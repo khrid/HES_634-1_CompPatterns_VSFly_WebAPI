@@ -102,7 +102,8 @@ namespace VSFlyWebAPI.Controllers
         {
             Flight f = new Flight();
             f.Pilot = _context.PilotSet.Find(1);
-            f.Seats = 300;
+            f.Seats = flight.Seats;
+            f.BasePrice = flight.BasePrice;
             f.Date = flight.Date;
             f.Departure = flight.Departure;
             f.Destination = flight.Destination;
@@ -152,7 +153,7 @@ namespace VSFlyWebAPI.Controllers
             foreach (Flight f in flightList)
             {
                 // do not return past flights
-                if (f.Date >= DateTime.Now)
+                if (f.Date >= DateTime.Now && !IsFlightFull(f))
                 {
                     FlightM fM = new FlightM();
                     fM.FlightNo = f.FlightNo;
