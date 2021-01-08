@@ -29,10 +29,9 @@ The result consists of 2 Visual Studio solutions.
 -	With a webAPI layer
   -	A controller accepting RESTfull requests and returning the data in JSON format
   - Requests to be processed:
-      - Return all available flights (not full)
-      - Return the sale price of a flight
-      - Buying a ticket on a flight
-      - Return the total sale price of all tickets sold for a flight
-      - Return the average sale price of all tickets sold for a destination (multiple flights possible)
-      - Return the list of all tickets sold for a destination with the first and last name of the travelers and the flight number as well as the sale price of each ticket.
-      - With an EntityFramework core layer to access the database as illustrated in the following figure.
+      - [x] Return all available flights (not full)
+      - [x] Return the sale price of a flight
+      - [x] Buying a ticket on a flight
+      - [ ] Return the total sale price of all tickets sold for a flight
+      - [ ] Return the average sale price of all tickets sold for a destination (multiple flights possible)
+      - [ ] Return the list of all tickets sold for a destination with the first and last name of the travelers and the flight number as well as the sale price of each ticket.
