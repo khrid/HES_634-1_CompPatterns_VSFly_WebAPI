@@ -36,26 +36,6 @@ namespace VSFlyWebAPI.Controllers
             return bookingListTmp;
         }
 
-        // GET: api/Bookings
-        [HttpGet]
-        [Route("FlightBookingSet")]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetFlightBookingSet(int flightNo)
-        {
-            var bookingList = await _context.BookingSet.ToListAsync();
-            List<Booking> bookingListTmp = new List<Booking>();
-            foreach (Booking b in bookingList)
-            {
-                if(b.FlightNo == flightNo)
-                {
-                    Booking bM = new Booking();
-                    bM.FlightNo = b.FlightNo;
-                    bM.PassengerID = b.PassengerID;
-                    bM.SalePrice = b.SalePrice;
-                    bookingListTmp.Add(bM);
-                }
-            }
-            return bookingListTmp;
-        }
 
         // GET: api/Bookings/5
         [HttpGet("{id}")]
