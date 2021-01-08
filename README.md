@@ -1,5 +1,5 @@
-# HES_634-1_CompPatterns_VSFly_Client
-C# client for the VSFly project
+# HES_634-1_CompPatterns_VSFly_WebAPI
+C# WebAPI for the VSFly project
 
 ## Introduction
 On the basis of the EF model worked on in the course, you must design an aircraft price management application for the airline VSFly.
