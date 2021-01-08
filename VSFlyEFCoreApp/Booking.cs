@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -12,5 +13,8 @@ namespace VSFlyEFCoreApp
         public int PassengerID { get; set; }
         public virtual Flight Flight { get; set; }
         public virtual Passenger Passenger { get; set;  }
+
+        [Required]
+        public double SalePrice { get; set; }
     }
 }
