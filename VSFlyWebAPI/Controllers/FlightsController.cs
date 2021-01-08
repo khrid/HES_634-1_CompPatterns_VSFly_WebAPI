@@ -56,16 +56,8 @@ namespace VSFlyWebAPI.Controllers
                 flightM.Date = flight.Date;
                 flightM.Departure = flight.Departure;
                 flightM.Destination = flight.Destination;
-                // compute capacity
-                // first we need the number of reservation for this flight
-                // TODO find how to get all bookings from BookingsController, not from _context
-                //BookingsController bookingsController = new BookingsController(_context);
-                //var bookings = bookingsController.GetBookingSet();
-                //bookings = _context.BookingSet;
-                //flightM.Seats = (short?)(flight.Seats - n);
-
-                // price calculation algorithm
-                flightM.FinalPrice = ComputeSalePrice(GetFlightBookedSeats(flight), flight.Seats, flightM.Date, flight.BasePrice);
+                flightM.BasePrice = flight.BasePrice;
+               
             }
 
 
@@ -110,7 +102,8 @@ namespace VSFlyWebAPI.Controllers
         {
             Flight f = new Flight();
             f.Pilot = _context.PilotSet.Find(1);
-            f.Seats = 300;
+            f.Seats = flight.Seats;
+            f.BasePrice = flight.BasePrice;
             f.Date = flight.Date;
             f.Departure = flight.Departure;
             f.Destination = flight.Destination;
@@ -160,7 +153,7 @@ namespace VSFlyWebAPI.Controllers
             foreach (Flight f in flightList)
             {
                 // do not return past flights
-                if (f.Date >= DateTime.Now)
+                if (f.Date >= DateTime.Now && !IsFlightFull(f))
                 {
                     FlightM fM = new FlightM();
                     fM.FlightNo = f.FlightNo;
@@ -171,6 +164,26 @@ namespace VSFlyWebAPI.Controllers
                 }
             }
             return listFlightM;
+        }
+
+        [HttpGet]
+        [Route("GetSalePriceForFlight/{id}")]
+        public async Task<ActionResult<double>> GetSalePriceForFlight(int id)
+        {
+            var salePrice = 0.0;
+            var flight = await _context.FlightSet.FindAsync(id);
+
+            if (flight == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                // price calculation algorithm
+                salePrice = ComputeSalePrice(GetFlightBookedSeats(flight), flight.Seats, flight.Date, flight.BasePrice);
+            }
+
+            return salePrice;
         }
 
         private int GetFlightBookedSeats(Flight flight)
