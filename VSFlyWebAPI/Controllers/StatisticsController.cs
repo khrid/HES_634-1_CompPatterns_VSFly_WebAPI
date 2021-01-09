@@ -108,9 +108,9 @@ namespace VSFlyWebAPI.Controllers
 
 
         // GET: api/Statistics/DestinationsBookings/LDN
-        [HttpGet("DestinationsBookings/{destination}")]
+        [HttpGet("DestinationBookings/{destination}")]
         //[Route("DestinationsBookings/{destination}")]
-        public async Task<ActionResult<DestinationBookings>> GetDestinationsBookings(string destination)
+        public async Task<ActionResult<DestinationBookings>> GetDestinationBookings(string destination)
         {
             DestinationBookings destinationBookings = new DestinationBookings();
             destinationBookings.Destination = destination;
