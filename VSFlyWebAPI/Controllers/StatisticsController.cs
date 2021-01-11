@@ -24,7 +24,6 @@ namespace VSFlyWebAPI.Controllers
 
         // GET: api/Statistics/FlightTotalSalePrice/5
         [HttpGet("FlightTotalSalePrice/{flightNo}")]
-        //[Route("FlightTotalSalePrice/{flightNo}")]
         public async Task<ActionResult<FlightTotalSalePrice>> GetFlightTotalSalePrice(int flightNo)
         {
             var flight = await _context.FlightSet.FindAsync(flightNo);
@@ -55,76 +54,44 @@ namespace VSFlyWebAPI.Controllers
 
         // GET: api/Statistics/DestinationAvgSalePrice/LDN
         [HttpGet("DestinationAvgSalePrice/{destination}")]
-        //[Route("DestinationAvgSalePrice/{destination}")]
         public async Task<ActionResult<DestinationAvgSalePrice>> GetDestinationAvgSalePrice(string destination)
         {
-            var flightList = await _context.FlightSet.ToListAsync();
-            List<Flight> listFlight = new List<Flight>();
-
-            foreach (Flight f in flightList)
-            {
-                if (f.Destination.ToUpper().Equals(destination.ToUpper()))
-                {
-                    listFlight.Add(f);
-                }
-            }
+            List<Flight> listFlight = await GetDestinationFlightsList(destination);
 
             int passengersCount = 0;
             double totalSalePrice = 0;
-            //FlightTotalSalePrice flightTotalSalePriceTmp;
+            ActionResult<FlightTotalSalePrice> flightTotalSalePriceTmp;
 
             foreach (Flight f in listFlight)
             {
-                /*flightTotalSalePriceTmp = await this.GetFlightTotalSalePrice(f.FlightNo);
-                totalSalePrice += flightTotalSalePriceTmp.TotalSalePrice;
-                passengersCount += flightTotalSalePriceTmp.PassengersCount;*/
-
-                
-                var bookingList = await _context.BookingSet.ToListAsync();
-                foreach (Booking b in bookingList)
-                {
-                    if (b.FlightNo == f.FlightNo)
-                    {
-                        totalSalePrice += b.SalePrice;
-                        passengersCount++;
-                    }
-                }
-
+                flightTotalSalePriceTmp = await GetFlightTotalSalePrice(f.FlightNo);
+                totalSalePrice += flightTotalSalePriceTmp.Value.TotalSalePrice;
+                passengersCount += flightTotalSalePriceTmp.Value.PassengersCount;
             }
 
             if (passengersCount > 0)
             {
                 DestinationAvgSalePrice destinationAvgSalePrice = new DestinationAvgSalePrice();
                 destinationAvgSalePrice.Destination = destination;
-                destinationAvgSalePrice.AvgSalePrice = totalSalePrice / (double)passengersCount;
+                destinationAvgSalePrice.AvgSalePrice = Math.Round(totalSalePrice / (double)passengersCount, 2);
                 return destinationAvgSalePrice;
             }
             else
             {
                 return NotFound();
             }
-   
+
         }
 
 
         // GET: api/Statistics/DestinationsBookings/LDN
         [HttpGet("DestinationBookings/{destination}")]
-        //[Route("DestinationsBookings/{destination}")]
         public async Task<ActionResult<DestinationBookings>> GetDestinationBookings(string destination)
         {
             DestinationBookings destinationBookings = new DestinationBookings();
             destinationBookings.Destination = destination;
 
-            var flightList = await _context.FlightSet.ToListAsync();
-            List<Flight> listFlight = new List<Flight>();
-
-            foreach (Flight f in flightList)
-            {
-                if (f.Destination.ToUpper().Equals(destination.ToUpper()))
-                {
-                    listFlight.Add(f);
-                }
-            }
+            List<Flight> listFlight = await GetDestinationFlightsList(destination);
 
             foreach (Flight f in listFlight)
             {
@@ -143,8 +110,24 @@ namespace VSFlyWebAPI.Controllers
                 }
 
             }
-
             return destinationBookings;
+        }
+
+
+        private async Task<List<Flight>> GetDestinationFlightsList(string destination)
+        {
+            var flightList = await _context.FlightSet.ToListAsync();
+            List<Flight> listFlight = new List<Flight>();
+
+            foreach (Flight f in flightList)
+            {
+                if (f.Destination.ToUpper().Equals(destination.ToUpper()))
+                {
+                    listFlight.Add(f);
+                }
+            }
+
+            return listFlight;
         }
 
     }

@@ -13,6 +13,5 @@ namespace VSFlyWebAPI.Models
         public double TotalSalePrice { get; set; }
 
         public int PassengersCount { get; set; }
-
     }
 }
