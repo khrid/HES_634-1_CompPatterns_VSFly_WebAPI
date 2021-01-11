@@ -51,9 +51,10 @@ namespace VSFlyWebAPI.Controllers
             return booking;
         }
 
+        // Not used
         // PUT: api/Bookings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        /*[HttpPut("{id}")]
         public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
             if (id != booking.FlightNo)
@@ -80,7 +81,7 @@ namespace VSFlyWebAPI.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -107,7 +108,9 @@ namespace VSFlyWebAPI.Controllers
             return CreatedAtAction("GetBooking", new { id = booking.FlightNo }, booking);
         }
 
+        // Not used
         // DELETE: api/Bookings/5
+        /*
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
@@ -121,7 +124,7 @@ namespace VSFlyWebAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
         private bool BookingExists(int id)
         {
@@ -129,6 +132,6 @@ namespace VSFlyWebAPI.Controllers
         }
 
         // ----------------------------
-
+        
     }
 }

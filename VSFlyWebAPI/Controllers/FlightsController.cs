@@ -64,8 +64,10 @@ namespace VSFlyWebAPI.Controllers
             return flightM;
         }
 
+        // Not used
         // PUT: api/Flights/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /*
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFlight(int id, Flight flight)
         {
@@ -93,7 +95,7 @@ namespace VSFlyWebAPI.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Flights
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -120,7 +122,9 @@ namespace VSFlyWebAPI.Controllers
             return CreatedAtAction("GetFlight", new { id = flight.FlightNo }, flight);
         }
 
+        // Not used
         // DELETE: api/Flights/5
+        /*
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFlight(int id)
         {
@@ -134,7 +138,7 @@ namespace VSFlyWebAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
         private bool FlightExists(int id)
         {
@@ -204,8 +208,7 @@ namespace VSFlyWebAPI.Controllers
 
         private double ComputeSalePrice(int BookedSeats, short? FlightCapacity, DateTime FlightDeparture, double BasePrice) 
         {
-            double capacity = (double)(BookedSeats / FlightCapacity * 100);
-            //double SalePrice = BasePrice;
+            double capacity = ((double)BookedSeats / (double)FlightCapacity * 100);
             double Modifier = 1;
             /*   1.	If the airplane is more than 80% full regardless of the date:
                     a. sale price = 150% of the base price
@@ -222,7 +225,7 @@ namespace VSFlyWebAPI.Controllers
             } 
             else
             {
-                int delta = (DateTime.Now - FlightDeparture).Days;
+                int delta = (FlightDeparture - DateTime.Now).Days;
                 if (delta < 60)
                 {
                     if (delta < 30)
@@ -231,10 +234,10 @@ namespace VSFlyWebAPI.Controllers
                         {
                             Modifier = 0.7;
                         } 
-                        else if (capacity < 20)
-                        {
-                            Modifier = 0.8;
-                        }
+                    }
+                    else if (capacity < 20)
+                    {
+                        Modifier = 0.8;
                     }
                 }
             }

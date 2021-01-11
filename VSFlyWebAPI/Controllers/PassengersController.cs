@@ -58,8 +58,10 @@ namespace VSFlyWebAPI.Controllers
             return passengerM;
         }
 
+        // Not used
         // PUT: api/Passengers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /*
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBooking(int id, PassengerM passenger)
         {
@@ -87,7 +89,7 @@ namespace VSFlyWebAPI.Controllers
             }
 
             return NoContent();
-        }
+        }*/
 
         // POST: api/Passengers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -127,7 +129,9 @@ namespace VSFlyWebAPI.Controllers
             return CreatedAtAction("GetPassenger", new { id = passenger.PersonID }, passenger);
         }
 
+        // Not used
         // DELETE: api/Passengers/5
+        /*
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePassenger(int id)
         {
@@ -141,7 +145,7 @@ namespace VSFlyWebAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }*/
 
         private bool BookingExists(int id)
         {
