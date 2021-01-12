@@ -113,6 +113,23 @@ namespace VSFlyWebAPI.Controllers
             return destinationBookings;
         }
 
+        [HttpGet("Destinations")]
+        public async Task<ActionResult<IEnumerable<string>>> GetDestinations()
+        {
+            var flightList = await _context.FlightSet.ToListAsync();
+            List<string> listDestination = new List<string>();
+            foreach (Flight f in flightList)
+            {
+                string destinationUpper = f.Destination.ToUpper();
+                // do not return past flights
+                if (!listDestination.Contains(destinationUpper))
+                {
+                    listDestination.Add(destinationUpper);
+                }
+            }
+            return listDestination.OrderBy(q => q).ToList();
+        }
+
 
         private async Task<List<Flight>> GetDestinationFlightsList(string destination)
         {
