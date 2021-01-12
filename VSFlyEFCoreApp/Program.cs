@@ -182,11 +182,7 @@ namespace VSFlyEFCoreApp
                 // sélectionner et afficher tous les vols
                 foreach (Flight flight in ctx.FlightSet)
                 {
-
                     // activer le lazy loading, c'est fait dans WWWingsContext.cs
-
-                    //// explicit loading
-                    //ctx.Entry(flight).Reference(x => x.Pilot).Load();
 
                     Console.WriteLine("{0} {1} {2} {3}",
                         flight.Date, flight.Destination, flight.Seats, flight.Pilot.Surname);
@@ -237,22 +233,7 @@ namespace VSFlyEFCoreApp
             {
 
                 ctx.BookingSet.Add(new Booking { FlightNo = 1, PassengerID = 1 });
-                /*
-                Flight f = ctx.FlightSet.Find(1);
-
-                ctx.Entry(f).Collection(x => x.BookingSet).Load();
-
-                f.BookingSet.Add(new Booking { PassengerID = 2 });
-
-                // have a passenger
-                Passenger p = ctx.PassengerSet.Find(3);
-
-                ctx.Entry(p).Collection(x => x.BookingSet).Load();
-
-                p.BookingSet.Add(new Booking { FlightNo = 1 });
-
-                ctx.BookingSet.Add(new Booking { Flight = f, Passenger = ctx.PassengerSet.Find(4) });
-                */
+                
                 ctx.SaveChanges();
             }
         }
